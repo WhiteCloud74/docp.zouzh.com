@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>usr_ammeter</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\framework\FrameworkCore\FrameworkCore.csproj" />
+    <ProjectReference Include="..\..\framework\GatewayService\GatewayService.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetPath) $(SolutionDir)\framework\GatewayService\$(OutDir)" />
+  </Target>
+
+</Project>
