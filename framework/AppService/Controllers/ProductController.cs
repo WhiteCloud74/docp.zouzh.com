@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FrameworkCore.Database;
+using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.ProductDefine;
 using FrameworkCore.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -15,42 +16,53 @@ namespace AppService.Controllers
     /// <summary>
     /// 产品的定义、注册、注销等
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         // GET: api/<ProductController>
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IEnumerable<Product>> GetAsync()
         {
-            return await ProductSevice.GetAllProductAsync();
+            var ret = await ProductSevice.GetAllProductAsync();
+            return ret;
         }
 
         // GET api/<ProductController>/5
-        [HttpGet("{productId}")]
+        [HttpGet("GetOne/{productId}")]
         public async Task<Product> GetAsync(string productId)
         {
             return await ProductSevice.GetProductAsync(Guid.Parse(productId));
         }
 
         // POST api/<ProductController>
-        [HttpPost]
-        public async Task<bool> AddAsync([FromBody] string value)
+        [HttpPost("AddOne")]
+        public async Task<bool> AddAsync([FromBody] object value)//()//
         {
-            Product product = JsonConvert.DeserializeObject<Product>(value) as Product;
-            return await ProductSevice.AddProductAsync(product) == 1;
+            try
+            {
+                Product product = JsonConvert.DeserializeObject<Product>(value.ToString(), MyDataTypeJsonConvert.Instance) as Product;
+                var ret = await ProductSevice.AddProductAsync(product);
+                return ret >= 1;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+            //  return await Task.Run(() => { return true; });
         }
 
         // PUT api/<ProductController>/5
-        [HttpPut("{productId}")]
-        public async Task<bool> UpdateAsync(string productId, [FromBody] string value)
+        [HttpPut("Update/{productId}")]
+        public async Task<bool> UpdateAsync(string productId, [FromBody] object value)
         {
-            Product product = JsonConvert.DeserializeObject<Product>(value) as Product;
-            return await ProductSevice.UpdateProductAsync(Guid.Parse(productId),product) == 1;
+            Product product = JsonConvert.DeserializeObject<Product>(value.ToString(), MyDataTypeJsonConvert.Instance) as Product;
+            return await ProductSevice.UpdateProductAsync(Guid.Parse(productId), product) == 1;
         }
 
         // DELETE api/<ProductController>/5
-        [HttpDelete("{productId}")]
+        [HttpDelete("Delete/{productId}")]
         public async Task<bool> DeleteAsync(string productId)
         {
             return await ProductSevice.DeleteProductAsync(Guid.Parse(productId)) == 1;

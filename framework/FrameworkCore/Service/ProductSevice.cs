@@ -1,6 +1,8 @@
 ﻿using FrameworkCore.Metadata.Database;
+using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.ProductDefine;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,21 +13,39 @@ namespace FrameworkCore.Service
     {
         public async static Task<Product> GetProductAsync(Guid productId)
         {
-            using var modelDbContext = DbServiceProvider.ModelDbContext;
-            return await modelDbContext.Products.FindAsync(productId);
+            return await GetAllProduct().FirstOrDefaultAsync(f => f.ProductId == productId);
         }
 
         public async static Task<IEnumerable<Product>> GetAllProductAsync()
         {
-            using var modelDbContext = DbServiceProvider.ModelDbContext;
-            return await modelDbContext.Products.ToListAsync();
+            return await GetAllProduct().ToListAsync();
+        }
+
+        private static IIncludableQueryable<Product, MyDataType> GetAllProduct()
+        {
+            return DbServiceProvider.ModelDbContext.Products
+                .Include(p => p.ProductBrands).ThenInclude(d => d.MyDataType)
+                .Include(p => p.ProductNameplates).ThenInclude(d => d.MyDataType)
+                .Include(p => p.ProductProperties).ThenInclude(d => d.MyDataType)
+                .Include(p => p.ProductEvents).ThenInclude(e => e.ProductEventProperties).ThenInclude(d => d.MyDataType)
+                .Include(p => p.ProductFunctions).ThenInclude(f => f.ProductFunctionInputs).ThenInclude(d => d.MyDataType)
+                .Include(p => p.ProductFunctions).ThenInclude(f => f.ProductFunctionOutputs).ThenInclude(d => d.MyDataType);
         }
 
         public async static Task<int> AddProductAsync(Product product)
         {
+            try
+            {
             using var modelDbContext = DbServiceProvider.ModelDbContext;
             modelDbContext.Add(product);
             return await modelDbContext.SaveChangesAsync();
+
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public async static Task<int> UpdateProductAsync(Guid productId, Product product)

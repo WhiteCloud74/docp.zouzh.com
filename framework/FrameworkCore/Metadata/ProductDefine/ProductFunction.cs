@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace FrameworkCore.Metadata.ProductDefine
 {
@@ -17,6 +15,9 @@ namespace FrameworkCore.Metadata.ProductDefine
         public List<ProductField> ProductFunctionOutputs { get; set; }
 
         #region 关系
+        //[JsonIgnore]
+        //public Guid ProductId { get; set; }
+        //[JsonIgnore]
         public Product Product { get; set; }
         #endregion 关系
     }

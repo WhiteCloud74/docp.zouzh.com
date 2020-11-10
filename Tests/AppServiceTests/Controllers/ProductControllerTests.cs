@@ -3,6 +3,9 @@ using AppService.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FrameworkCore.Instrument;
+using Newtonsoft.Json;
+using FrameworkCore.Service;
 
 namespace AppService.Controllers.Tests
 {
@@ -24,7 +27,21 @@ namespace AppService.Controllers.Tests
         [TestMethod()]
         public void AddTest()
         {
-            Assert.Fail();
+            try
+            {
+                var product = TestStub.CreateTestProduct();
+                //var data = JsonConvert.SerializeObject(product);
+                //var controller = new ProductController();
+                //var ret = controller.AddAsync(data).Result;
+                var result = ProductSevice.AddProductAsync(product).Result;
+                //Assert.IsTrue(ret);
+
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         [TestMethod()]

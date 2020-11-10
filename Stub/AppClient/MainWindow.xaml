@@ -7,8 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="AddProduct" Content="添加产品" HorizontalAlignment="Left" Margin="170,261,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.4,-0.187" Click="AddProduct_Click"/>
-        <Button x:Name="AddDevice" Content="添加设备" HorizontalAlignment="Left" Margin="180,306,0,0" VerticalAlignment="Top" Click="AddDevice_Click"/>
+        <Button x:Name="AddProduct" Content="添加产品" HorizontalAlignment="Left" Margin="162,134,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.4,-0.187" Click="AddProduct_Click"/>
+        <Button x:Name="AddDevice" Content="添加设备" HorizontalAlignment="Left" Margin="162,255,0,0" VerticalAlignment="Top" Click="AddDevice_Click"/>
+        <Button x:Name="InitDatabase" Content="初始化数据库" HorizontalAlignment="Left" Margin="162,70,0,0" VerticalAlignment="Top" Click="InitDatabase_Click"/>
+        <Button x:Name="Energy" Content="抄读电量" HorizontalAlignment="Left" Margin="188,317,0,0" VerticalAlignment="Top" Click="Energy_Click"/>
 
     </Grid>
 </Window>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FrameworkCore.Database;
 using FrameworkCore.Metadata.Database;
+using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.DeviceDefine;
 using FrameworkCore.Metadata.ProductDefine;
 using FrameworkCore.Service;
@@ -17,19 +18,19 @@ namespace AppService.Controllers
     /// <summary>
     /// 设备管理控制器，设备的注册注销、参数设置
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class DeviceController : ControllerBase
     {
         // GET: api/<DeviceController>
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IEnumerable<Device>> GetAsync()
         {
             return await DeviceService.GetAllDeviceAsync();
         }
 
         // GET api/<DeviceController>/5
-        [HttpGet("{DeviceId}")]
+        [HttpGet("GetOne/{deviceId}")]
         public async Task<Device> GetAsync(string deviceId)
         {
             return await DeviceService.GetDeviceAsync(Guid.Parse(deviceId));
@@ -40,33 +41,32 @@ namespace AppService.Controllers
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("GetTemplate/{productId}")]
         public async Task<Device> GetTemplateAsync(string productId)
         {
             Product product = await ProductSevice.GetProductAsync(Guid.Parse(productId));
 
             return DeviceService.CreateDeviceTemplateFromProduct(product);
-
         }
 
         // POST api/<DeviceController>
-        [HttpPost]
-        public async Task<bool> AddAsync([FromBody] string value)
+        [HttpPost("AddOne")]
+        public async Task<bool> AddAsync([FromBody] object value)
         {
-            Device device = JsonConvert.DeserializeObject<Device>(value);
+            Device device = JsonConvert.DeserializeObject<Device>(value.ToString(), MyDataTypeJsonConvert.Instance);
             return await DeviceService.AddDeviceAsync(device);
         }
 
         // PUT api/<DeviceController>/5
-        [HttpPut("{DeviceId}")]
-        public async Task<bool> UpdateAsync(string deviceId, [FromBody] string value)
+        [HttpPut("Update/{deviceId}")]
+        public async Task<bool> UpdateAsync(string deviceId, [FromBody] object value)
         {
-            Device device = JsonConvert.DeserializeObject<Device>(value);
+            Device device = JsonConvert.DeserializeObject<Device>(value.ToString(), MyDataTypeJsonConvert.Instance);
             return await DeviceService.UpdateDeviceAsync(Guid.Parse(deviceId), device);
         }
 
         // DELETE api/<DeviceController>/5
-        [HttpDelete("{DeviceId}")]
+        [HttpDelete("Delete/{deviceId}")]
         public async Task<bool> DeleteAsync(string deviceId)
         {
             return await DeviceService.DeleteDeviceAsync(Guid.Parse(deviceId));

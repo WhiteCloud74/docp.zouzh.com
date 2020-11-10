@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FrameworkCore.Metadata.DataTypes
 {
-    public class IntType : DataType
+    public class IntType : MyDataType
     {
         public int Max { get; set; }
         public int Min { get; set; }

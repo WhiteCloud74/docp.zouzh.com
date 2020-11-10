@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -55,9 +56,11 @@ namespace FrameworkCore.Instrument
         #region WebClient
         public static string WebClientDownloadString(string url)
         {
-            WebClient wc = new WebClient();
-            //wc.BaseAddress = url;   //设置根目录
-            wc.Encoding = Encoding.UTF8;    //设置按照何种编码访问，如果不加此行，获取到的字符串中文将是乱码
+            WebClient wc = new WebClient
+            {
+                //wc.BaseAddress = url;   //设置根目录
+                Encoding = Encoding.UTF8    //设置按照何种编码访问，如果不加此行，获取到的字符串中文将是乱码
+            };
             string str = wc.DownloadString(url);
             return str;
         }
@@ -133,11 +136,11 @@ namespace FrameworkCore.Instrument
             return await HttpClientPostAsync(url, BuildParam(paramArray));
         }
 
-        public static async Task<string> HttpClientPostAsync(string url, string strJson)
+        public static async Task<string> HttpClientPostAsync(string url, string postData)
         {
             try
             {
-                HttpContent content = new StringContent(strJson);
+                HttpContent content = new StringContent(postData);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 HttpResponseMessage res = await client.PostAsync(url, content);
@@ -155,17 +158,17 @@ namespace FrameworkCore.Instrument
             return HttpClientPost(url, BuildParam(paramArray));
         }
 
-        public static string HttpClientPost(string url, string strJson)
+        public static string HttpClientPost(string url, string postData)
         {
             try
             {
-                HttpContent content = new StringContent(strJson);
+                HttpContent content = new StringContent(postData);
 
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 HttpResponseMessage res = client.PostAsync(url, content).Result;
 
-                return res.StatusCode == System.Net.HttpStatusCode.OK ? res.Content.ReadAsStringAsync().Result : null;
+                return res.StatusCode == HttpStatusCode.OK ? res.Content.ReadAsStringAsync().Result : null;
             }
             catch (Exception)
             {
@@ -200,6 +203,42 @@ namespace FrameworkCore.Instrument
             try
             {
                 return client.GetStringAsync(url).Result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static string HttpClienPut(string url, string putData)
+        {
+            try
+            {
+                HttpContent content = new StringContent(putData);
+
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                HttpResponseMessage res = client.PutAsync(url, content).Result;
+
+                return res.StatusCode == HttpStatusCode.OK ? res.Content.ReadAsStringAsync().Result : null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<string> HttpClienPutAsync(string url, string putData)
+        {
+            try
+            {
+                HttpContent content = new StringContent(putData);
+
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                HttpResponseMessage res = await client.PutAsync(url, content);
+
+                return res.StatusCode == HttpStatusCode.OK ? await res.Content.ReadAsStringAsync() : null;
             }
             catch (Exception)
             {
@@ -273,12 +312,10 @@ namespace FrameworkCore.Instrument
                 HttpResponseMessage message = null;
                 using (Stream dataStream = new MemoryStream(data ?? new byte[0]))
                 {
-                    using (HttpContent content = new StreamContent(dataStream))
-                    {
-                        content.Headers.Add("Content-Type", ContentType);
-                        var task = client.PostAsync(Url, content);
-                        message = task.Result;
-                    }
+                    using HttpContent content = new StreamContent(dataStream);
+                    content.Headers.Add("Content-Type", ContentType);
+                    var task = client.PostAsync(Url, content);
+                    message = task.Result;
                 }
                 if (message != null && message.StatusCode == System.Net.HttpStatusCode.OK)
                 {

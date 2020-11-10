@@ -1,12 +1,8 @@
-﻿using FrameworkCore.Database;
-using FrameworkCore.Metadata.DeviceDefine;
+﻿using FrameworkCore.Metadata.DeviceDefine;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
 
 namespace FrameworkCore.Metadata.ProductDefine
 {
@@ -72,10 +68,11 @@ namespace FrameworkCore.Metadata.ProductDefine
         /// </summary>
         public List<ProductFunction> ProductFunctions { get; set; }
 
-        /// <summary>
-        /// 该产品有哪些设备
-        /// </summary>
-        [NotMapped]
-        public List<Device> Devices { get; set; }
+        ///// <summary>
+        ///// 该产品有哪些设备
+        ///// </summary>
+        //[NotMapped]
+        //[JsonIgnore]
+        //public List<Device> Devices { get; set; }
     }
 }

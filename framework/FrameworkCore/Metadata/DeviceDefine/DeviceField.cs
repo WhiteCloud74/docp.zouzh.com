@@ -1,4 +1,5 @@
 ﻿using FrameworkCore.Metadata.ProductDefine;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,14 +20,20 @@ namespace FrameworkCore.Metadata.DeviceDefine
         /// </summary>
 
         #region 关系
-        public Guid DeviceNameplatesId { get; set; }
+        //[JsonIgnore]
+        public Guid ProductFieldId { get; set; }
+        //[JsonIgnore]
+        //public ProductField ProductField { get; set; }
+
+        //[JsonIgnore]
+        //public Guid DeviceNameplatesId { get; set; }
+        //[JsonIgnore]
         public Device DeviceNameplates { get; set; }
 
-        public Guid DevicePropertiesId { get; set; }
+        //[JsonIgnore]
+        // public Guid DevicePropertiesId { get; set; }
+        //[JsonIgnore]
         public Device DeviceProperties { get; set; }
-
-        public Guid ProductFieldId { get; set; }
-        public ProductField ProductField { get; set; }
         #endregion 关系
 
     }

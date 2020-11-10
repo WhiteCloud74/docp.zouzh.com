@@ -24,14 +24,17 @@ namespace FrameworkCore.Metadata.Database
                 .Build();
             container.AddDbContextPool<ModelDbContext>(
                 options => options.UseMySql(configuration.GetConnectionString("Mysql")), poolSize: 64);
+            container.AddDbContextPool<ModelDbContext>(
+                options => options.UseInMemoryDatabase("Product"));
             Provider = container.BuildServiceProvider();
         }
 
-        public static void Initialize()
+        public static bool Initialize()
         {
             using var modelDbContext = DbServiceProvider.ModelDbContext;
             bool s = modelDbContext.Database.EnsureDeleted();
             bool ret = modelDbContext.Database.EnsureCreated();
+            return s && ret;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FrameworkCore.Metadata.ProductDefine;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -51,10 +52,14 @@ namespace FrameworkCore.Metadata.DeviceDefine
 
         public List<DeviceField> DeviceProperties { get; set; }
 
-        /// <summary>
-        /// 设备的产品定义
-        /// </summary>
-        public Product Product { get; set; }
+        #region 关系
+        ///// <summary>
+        ///// 设备的产品定义
+        ///// </summary>
+        //[JsonIgnore]
         public Guid ProductId { get; set; }
+        //[JsonIgnore]
+        //public Product Product { get; set; }
+        #endregion 关系
     }
 }
