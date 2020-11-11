@@ -1,6 +1,7 @@
 ﻿using FrameworkCore.Metadata.Database;
 using FrameworkCore.Metadata.DeviceDefine;
 using FrameworkCore.Metadata.ProductDefine;
+using FrameworkCore.Redis;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,18 +31,17 @@ namespace FrameworkCore.Service
 
         public static async Task<bool> AddDeviceAsync(Device device)
         {
-            using var modelDbContext = DbServiceProvider.ModelDbContext;
-            modelDbContext.Add(device);
             try
             {
-                var ret = await modelDbContext.SaveChangesAsync();
-                return ret >= 1;
-
+                using var modelDbContext = DbServiceProvider.ModelDbContext;
+                modelDbContext.Add(device);
+                await modelDbContext.SaveChangesAsync();
+                await RedisService.AddDeviceAsync(device);
+                return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
-                throw;
+                return false;
             }
         }
 

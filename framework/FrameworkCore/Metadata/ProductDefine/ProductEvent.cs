@@ -15,7 +15,7 @@ namespace FrameworkCore.Metadata.ProductDefine
         #region 关系
         //[JsonIgnore]
         //public Guid ProductId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Product Product { get; set; }
         #endregion 关系
     }

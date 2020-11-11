@@ -1,4 +1,5 @@
-﻿using FrameworkCore.Service;
+﻿using FrameworkCore.Redis;
+using FrameworkCore.Service;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace AppService.Controllers
         [HttpPut("InitDatabase")]
         public bool InitDatabase()
         {
-            return DatabaseService.InitDatabase();
+            return DatabaseService.InitDatabase() 
+                && RedisService.InitDataAsync().Result;
         }
     }
 }

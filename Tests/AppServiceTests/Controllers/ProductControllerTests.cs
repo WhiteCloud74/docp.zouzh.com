@@ -6,6 +6,7 @@ using System.Text;
 using FrameworkCore.Instrument;
 using Newtonsoft.Json;
 using FrameworkCore.Service;
+using AppClient;
 
 namespace AppService.Controllers.Tests
 {
@@ -29,7 +30,7 @@ namespace AppService.Controllers.Tests
         {
             try
             {
-                var product = TestStub.CreateTestProduct();
+                var product = TestStub.CreateGatewayProduct();
                 //var data = JsonConvert.SerializeObject(product);
                 //var controller = new ProductController();
                 //var ret = controller.AddAsync(data).Result;

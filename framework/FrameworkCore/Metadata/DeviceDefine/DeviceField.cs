@@ -27,12 +27,12 @@ namespace FrameworkCore.Metadata.DeviceDefine
 
         //[JsonIgnore]
         //public Guid DeviceNameplatesId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Device DeviceNameplates { get; set; }
 
         //[JsonIgnore]
         // public Guid DevicePropertiesId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Device DeviceProperties { get; set; }
         #endregion 关系
 

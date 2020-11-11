@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\framework\FrameworkCore\FrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Stub\AppClient\AppClient.csproj" />
   </ItemGroup>
 
 </Project>

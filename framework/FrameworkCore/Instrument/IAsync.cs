@@ -19,11 +19,30 @@ namespace FrameworkCore.Instrument
 
     public class MyWaiter<T> : IAwaitable<T>, IAwaiter<T>
     {
+        private T result;
+        private Action continuation;
+
+        // INotifyCompletion Implement
+        public void OnCompleted(Action continuation) { this.continuation = continuation; }
+
+        // Compiler Call Methods
         public bool IsCompleted { get; private set; }
+        public T GetResult() { return result; }
+        public IAwaiter<T> GetAwaiter() { return this; }
+
+        // Self Call Methods
+        public void SetResult(T ret)
+        {
+            result = ret;
+            continuation?.Invoke();
+        }
+    }
+}    /*
+        public bool IsCompleted { get; private set; } = false;
 
         public IAwaiter<T> GetAwaiter() => this;
 
-        public T GetResult() { IsCompleted = false; return _result; }
+        public T GetResult() => _result;
 
         public void OnCompleted(Action continuation)
         {

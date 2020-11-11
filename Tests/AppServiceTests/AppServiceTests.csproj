@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\framework\AppService\AppService.csproj" />
+    <ProjectReference Include="..\..\Stub\AppClient\AppClient.csproj" />
   </ItemGroup>
 
 </Project>

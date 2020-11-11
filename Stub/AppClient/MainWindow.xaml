@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="AddProduct" Content="添加产品" HorizontalAlignment="Left" Margin="162,134,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.4,-0.187" Click="AddProduct_Click"/>
-        <Button x:Name="AddDevice" Content="添加设备" HorizontalAlignment="Left" Margin="162,255,0,0" VerticalAlignment="Top" Click="AddDevice_Click"/>
-        <Button x:Name="InitDatabase" Content="初始化数据库" HorizontalAlignment="Left" Margin="162,70,0,0" VerticalAlignment="Top" Click="InitDatabase_Click"/>
-        <Button x:Name="Energy" Content="抄读电量" HorizontalAlignment="Left" Margin="188,317,0,0" VerticalAlignment="Top" Click="Energy_Click"/>
+        <Button x:Name="AddProduct" Content="添加产品" HorizontalAlignment="Left" Margin="162,134,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.4,-0.187" Click="AddProduct_Click" Width="76" Height="38"/>
+        <Button x:Name="AddDevice" Content="添加设备" HorizontalAlignment="Left" Margin="162,194,0,0" VerticalAlignment="Top" Click="AddDevice_Click" Width="76" Height="38"/>
+        <Button x:Name="InitDatabase" Content="初始化数据库" HorizontalAlignment="Left" Margin="162,70,0,0" VerticalAlignment="Top" Click="InitDatabase_Click" RenderTransformOrigin="0.464,0.135" Height="38" Width="76"/>
+        <Button x:Name="GetProperties" Content="读取属性" HorizontalAlignment="Left" Margin="162,251,0,0" VerticalAlignment="Top" Click="GetProperties_Click" RenderTransformOrigin="-0.575,-0.201" Width="76" Height="38"/>
 
     </Grid>
 </Window>

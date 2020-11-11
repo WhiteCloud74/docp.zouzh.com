@@ -29,17 +29,19 @@ namespace AppService.Controllers
 
         // POST api/<ProductController>
         [HttpPost("SetProperties")]
-        public async Task<List<KeyValuePair<string, string>>> SetPropertiesAsync(string deviceId, [FromBody] object value)
+        public async Task<List<KeyValuePair<string, string>>> SetPropertiesAsync([FromBody] object value)
         {
             List<KeyValuePair<string, string>> properties = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(value.ToString());
+            string deviceId = properties[0].Value;
             var ret = await OperateService.SetPropertiesAsync(deviceId, properties);
             return ret.Response;
         }
 
         [HttpPost("CallFunction")]
-        public async Task<List<KeyValuePair<string, string>>> CallFunctionAsync(string deviceId, string function, [FromBody] object value)
+        public async Task<List<KeyValuePair<string, string>>> CallFunctionAsync(string function, [FromBody] object value)
         {
             List<KeyValuePair<string, string>> inputs = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(value.ToString());
+            string deviceId = inputs[0].Value;
             var ret = await OperateService.CallFunctionAsync(deviceId, function, inputs);
             return ret.Response;
         }

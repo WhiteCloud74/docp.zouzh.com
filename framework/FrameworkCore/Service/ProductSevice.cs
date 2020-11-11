@@ -1,6 +1,7 @@
 ﻿using FrameworkCore.Metadata.Database;
 using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.ProductDefine;
+using FrameworkCore.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
@@ -32,19 +33,19 @@ namespace FrameworkCore.Service
                 .Include(p => p.ProductFunctions).ThenInclude(f => f.ProductFunctionOutputs).ThenInclude(d => d.MyDataType);
         }
 
-        public async static Task<int> AddProductAsync(Product product)
+        public async static Task<bool> AddProductAsync(Product product)
         {
             try
             {
-            using var modelDbContext = DbServiceProvider.ModelDbContext;
-            modelDbContext.Add(product);
-            return await modelDbContext.SaveChangesAsync();
-
+                using var modelDbContext = DbServiceProvider.ModelDbContext;
+                modelDbContext.Add(product);
+                await modelDbContext.SaveChangesAsync();
+                await RedisService.AddProductAsync(product);
+                return true;
             }
             catch (Exception e)
             {
-
-                throw;
+                return false;
             }
         }
 

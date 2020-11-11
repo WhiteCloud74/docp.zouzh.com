@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FrameworkCore.Database;
 using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.ProductDefine;
+using FrameworkCore.Redis;
 using FrameworkCore.Service;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -42,15 +43,12 @@ namespace AppService.Controllers
             try
             {
                 Product product = JsonConvert.DeserializeObject<Product>(value.ToString(), MyDataTypeJsonConvert.Instance) as Product;
-                var ret = await ProductSevice.AddProductAsync(product);
-                return ret >= 1;
+                return await ProductSevice.AddProductAsync(product);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
-                throw;
+                return false;
             }
-            //  return await Task.Run(() => { return true; });
         }
 
         // PUT api/<ProductController>/5

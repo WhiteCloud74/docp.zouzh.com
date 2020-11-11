@@ -19,7 +19,7 @@ namespace FrameworkCore.Metadata.DataTypes
         #region 关系
         //[JsonIgnore]
         public Guid ProductFieldId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public ProductField ProductField { get; set; }
         #endregion 关系
         /// <summary>

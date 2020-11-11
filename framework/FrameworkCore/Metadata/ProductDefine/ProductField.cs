@@ -31,32 +31,32 @@ namespace FrameworkCore.Metadata.ProductDefine
         #region 关系
         //[JsonIgnore]
         //public Guid ProductBrandsId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Product ProductBrands { get; set; }
 
         //[JsonIgnore]
         //public Guid ProductNameplatesId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Product ProductNameplates { get; set; }
 
         //[JsonIgnore]
         //public Guid ProductPropertiesId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Product ProductProperties { get; set; }
 
         //[JsonIgnore]
         //public Guid ProductFunctionInputsId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public ProductFunction ProductFunctionInputs { get; set; }
 
         //[JsonIgnore]
         //public Guid ProductFunctionOutputsId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public ProductFunction ProductFunctionOutputs { get; set; }
 
         //[JsonIgnore]
         //public Guid ProductEventId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public ProductEvent ProductEvent { get; set; }
         #endregion 关系
 

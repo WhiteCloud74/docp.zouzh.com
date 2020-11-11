@@ -28,15 +28,15 @@ namespace FrameworkCore.Service
                 CommandId = Guid.NewGuid().ToString(),
                 CommandType = CommandType.GetProperties,
 
-                DeviceId=deviceId,
-                GatewayId = RedisService.GetGatewayId(deviceId).Result,
+                DeviceId = deviceId,
+                GatewayId = await RedisService.GetGatewayIdAsync(deviceId),
                 ApplicateServerId = applicateServerId.ToString(),
 
                 Request = properties,
                 Expand = new List<KeyValuePair<string, string>>(),
             };
 
-            return await ProcessRedisCommand(command);
+            return await ProcessRedisCommandAsync(command);
         }
 
         public static async Task<RedisCommand> SetPropertiesAsync(string deviceId, List<KeyValuePair<string, string>> properties)
@@ -46,15 +46,15 @@ namespace FrameworkCore.Service
                 CommandId = Guid.NewGuid().ToString(),
                 CommandType = CommandType.SetProperties,
 
-                DeviceId=deviceId,
-                GatewayId = await RedisService.GetGatewayId(deviceId),
+                DeviceId = deviceId,
+                GatewayId = await RedisService.GetGatewayIdAsync(deviceId),
                 ApplicateServerId = applicateServerId.ToString(),
 
                 Request = properties,
                 Expand = new List<KeyValuePair<string, string>>(),
             };
 
-            return await ProcessRedisCommand(command);
+            return await ProcessRedisCommandAsync(command);
         }
 
         public static async Task<RedisCommand> CallFunctionAsync(string deviceId, string function, List<KeyValuePair<string, string>> inputs)
@@ -64,8 +64,8 @@ namespace FrameworkCore.Service
                 CommandId = Guid.NewGuid().ToString(),
                 CommandType = CommandType.Function,
 
-                DeviceId=deviceId,
-                GatewayId = await RedisService.GetGatewayId(deviceId),
+                DeviceId = deviceId,
+                GatewayId = await RedisService.GetGatewayIdAsync(deviceId),
                 ApplicateServerId = applicateServerId.ToString(),
 
                 Request = inputs,
@@ -74,18 +74,20 @@ namespace FrameworkCore.Service
                 Function = function
             };
 
-            return await ProcessRedisCommand(command);
+            return await ProcessRedisCommandAsync(command);
         }
 
-        async static Task<RedisCommand> ProcessRedisCommand(RedisCommand command)
+        async static Task<RedisCommand> ProcessRedisCommandAsync(RedisCommand command)
         {
-            var awaiter = new MyWaiter<RedisCommand>();
-
-            await _cache.AddOrUpdate(command.CommandId, awaiter, (g, c) => c);
-
-            await RedisService.ApplicateServerPublishCommandAsync(command);
-
-            return await awaiter;
+            RedisCommand result = null;
+            var ret = await RedisService.ApplicateServerPublishCommandAsync(command);
+            if (ret > 0)
+            {
+                var awaiter = new MyWaiter<RedisCommand>();
+                await _cache.AddOrUpdate(command.CommandId, awaiter, (g, c) => c);
+                result = await awaiter;
+            }
+            return result;
         }
 
         static void OnReceiveRedisCommand(RedisCommand command)

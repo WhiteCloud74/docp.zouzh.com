@@ -12,6 +12,7 @@ using FrameworkCore.Metadata.Database;
 using FrameworkCore.Service;
 using System.Threading;
 using FrameworkCore.Instrument;
+using AppClient;
 
 namespace FrameworkCore.Metadata.ProductDefine.Tests
 {
@@ -41,7 +42,7 @@ namespace FrameworkCore.Metadata.ProductDefine.Tests
         [TestMethod()]
         public async Task AddOrUpdateToDatabaseTestAsync()
         {
-            Product product = TestStub.CreateTestProduct();
+            Product product = TestStub.CreateGatewayProduct();
            
             var ret = await ProductSevice.AddProductAsync(product);
             //using var dataContext = new ProductDbContext();
