@@ -15,8 +15,9 @@ namespace AppService.Controllers
         [HttpPut("InitDatabase")]
         public bool InitDatabase()
         {
-            return DatabaseService.InitDatabase() 
-                && RedisService.InitDataAsync().Result;
+            var ret1 = DatabaseService.InitDatabase();
+            var ret2 = Task.Run(async () => await RedisService.InitDataAsync()).Result;
+            return ret1 && ret2;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace AppService.Controllers
             List<KeyValuePair<string, string>> properties
                 = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(value.ToString());
             string deviceId = properties[0].Value;
+            properties.RemoveAt(0);
             var ret = await OperateService.GetPropertiesAsync(deviceId, properties);
             return ret.Response;
         }
@@ -33,6 +34,7 @@ namespace AppService.Controllers
         {
             List<KeyValuePair<string, string>> properties = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(value.ToString());
             string deviceId = properties[0].Value;
+            properties.RemoveAt(0);
             var ret = await OperateService.SetPropertiesAsync(deviceId, properties);
             return ret.Response;
         }
@@ -42,6 +44,7 @@ namespace AppService.Controllers
         {
             List<KeyValuePair<string, string>> inputs = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(value.ToString());
             string deviceId = inputs[0].Value;
+            inputs.RemoveAt(0);
             var ret = await OperateService.CallFunctionAsync(deviceId, function, inputs);
             return ret.Response;
         }

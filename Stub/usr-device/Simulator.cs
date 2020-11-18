@@ -1,15 +1,12 @@
-﻿using FrameworkCore.Instrument;
-using GatewayService.SocketAdapter;
+﻿using FrameworkCore.SocketAdapter;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,25 +57,25 @@ namespace usr_device
         {
             Random random = new Random();
             List<Gateway> ret = new List<Gateway>(gatewayCount);
-            for (int i = 0; i < gatewayCount; i++)
+            for (int i = 1; i <= gatewayCount; i++)
             {
                 Gateway gateway = new Gateway()
                 {
                     Logger = _logger,
-                    GatewayId = $"20201105{i:D3}0",
-                    MacAddress = $"20201105{i:D3}0",
+                    GatewayId = $"CED4{i:D4}0000",
+                    MacAddress = $"CED4{i:D4}0000",
                     GatewayDelayMilliseconds = _gatewayDelayMilliseconds,
                     EndDevices = new EndDevice[random.Next(4, 8)]
                 };
 
-                for (int j = 0; j < gateway.EndDevices.Length; j++)
+                for (int j = 1; j <= gateway.EndDevices.Length; j++)
                 {
                     gateway.EndDevices[j] = new EndDevice()
                     {
                         Logger = _logger,
-                        DeviceID = $"20201105{i:D3}{j}",
+                        DeviceID = $"CED4{i:D4}{j:D4}",
+                        MacAddress = $"CED4{i:D4}{j:D4}",
                         Energy = 0,
-                        MacAddress = $"20201105{i:D3}{j}",
                     };
                 }
 

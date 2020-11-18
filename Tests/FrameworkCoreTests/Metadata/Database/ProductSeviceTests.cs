@@ -6,6 +6,7 @@ using System.Text;
 using FrameworkCore.Metadata.ProductDefine;
 using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.Database;
+using FrameworkCore.Service;
 
 namespace FrameworkCore.Database.Tests
 {
@@ -17,9 +18,9 @@ namespace FrameworkCore.Database.Tests
         {
             try
             {
-                DbServiceProvider.Initialize();
+                DatabaseService.InitDatabase();
             }
-            catch (Exception )
+            catch (Exception)
             {
                 throw;
             }

@@ -3,22 +3,30 @@ using FrameworkCore.Metadata.DeviceDefine;
 using FrameworkCore.Metadata.ProductDefine;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.IO;
 
-namespace FrameworkCore.Database
+namespace FrameworkCore.Metadata.Database
 {
     public class ModelDbContext : DbContext
     {
-        public DbSet<IntType> IntTypes { get; set; }
-        public DbSet<StringType> StringTypes { get; set; }
+        internal DbSet<IntType> IntTypes { get; set; }
+        internal DbSet<StringType> StringTypes { get; set; }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Device> Devices { get; set; }
 
         public ModelDbContext(DbContextOptions<ModelDbContext> dbContextOptions) : base(dbContextOptions) { }
 
+        public ModelDbContext() { }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var configuration = new ConfigurationBuilder()
+              .SetBasePath(Directory.GetCurrentDirectory())
+              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+              .Build();
+            optionsBuilder.UseMySql(configuration.GetConnectionString("Mysql"));
+            base.OnConfiguring(optionsBuilder);
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

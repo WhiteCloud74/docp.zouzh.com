@@ -36,5 +36,15 @@ namespace FrameworkCore.Metadata.DeviceDefine
         public Device DeviceProperties { get; set; }
         #endregion 关系
 
+        public DeviceField Clone()
+        {
+            return new DeviceField()
+            {
+                DeviceFieldId = DeviceFieldId,
+                DeviceFieldName = DeviceFieldName,
+                DataValue = DataValue,
+                ProductFieldId = ProductFieldId,
+            };
+        }
     }
 }

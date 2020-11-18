@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\deviceProtocol\Ammeter\Ammeter.csproj" />
     <ProjectReference Include="..\..\framework\FrameworkCore\FrameworkCore.csproj" />
-    <ProjectReference Include="..\..\framework\GatewayService\GatewayService.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

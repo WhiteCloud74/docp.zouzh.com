@@ -11,12 +11,10 @@ namespace FrameworkCore.Service
         {
             try
             {
-            return DbServiceProvider.Initialize();
-
+                return DbServiceProvider.Initialize();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
                 throw;
             }
         }

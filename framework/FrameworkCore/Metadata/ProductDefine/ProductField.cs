@@ -26,7 +26,7 @@ namespace FrameworkCore.Metadata.ProductDefine
         /// <summary>
         /// Field的值
         /// </summary>
-        public string DataValue { get; set; }
+        public string DataValue { get; set; } = "";
 
         #region 关系
         //[JsonIgnore]

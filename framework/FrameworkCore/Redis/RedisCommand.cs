@@ -13,6 +13,7 @@ namespace FrameworkCore.Redis
         public CommandType CommandType { get; set; }
 
         public string DeviceId { get; set; }
+        public string MacAddress { get; set; }
 
         public string GatewayId { get; set; }
 

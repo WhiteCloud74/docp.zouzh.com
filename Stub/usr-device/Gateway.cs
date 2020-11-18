@@ -1,12 +1,11 @@
-﻿using GatewayService.SocketAdapter;
+﻿using FrameworkCore.Instrument;
+using FrameworkCore.SocketAdapter;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Microsoft.Extensions.Logging;
-using FrameworkCore.Instrument;
 
 namespace usr_device
 {
@@ -16,6 +15,7 @@ namespace usr_device
         public String DeviceID { get; set; }
         public String MacAddress { get; set; } //12字节，0~9 20 16 12 00 00 31
         public int Energy { get; set; }// 电量（单位0.01KWH），数据库没有，返回0
+        public int Power { get; set; }
     }
 
     class Gateway

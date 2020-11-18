@@ -38,7 +38,7 @@ namespace AppService.Controllers.Tests
                 //Assert.IsTrue(ret);
 
             }
-            catch (Exception e)
+            catch (Exception )
             {
 
                 throw;

@@ -11,6 +11,11 @@
         <Button x:Name="AddDevice" Content="添加设备" HorizontalAlignment="Left" Margin="162,194,0,0" VerticalAlignment="Top" Click="AddDevice_Click" Width="76" Height="38"/>
         <Button x:Name="InitDatabase" Content="初始化数据库" HorizontalAlignment="Left" Margin="162,70,0,0" VerticalAlignment="Top" Click="InitDatabase_Click" RenderTransformOrigin="0.464,0.135" Height="38" Width="76"/>
         <Button x:Name="GetProperties" Content="读取属性" HorizontalAlignment="Left" Margin="162,251,0,0" VerticalAlignment="Top" Click="GetProperties_Click" RenderTransformOrigin="-0.575,-0.201" Width="76" Height="38"/>
+        <Button x:Name="CreateDevice" Content="批量创建设备" HorizontalAlignment="Left" Margin="440,251,0,0" VerticalAlignment="Top" Click="CreateDevice_Click" Height="38" Width="96" RenderTransformOrigin="0.442,3.526"/>
+        <Button x:Name="CreateProduct" Content="创建产品" HorizontalAlignment="Left" Margin="440,0,0,0" VerticalAlignment="Center" Click="CreateProduct_Click" Height="38" Width="96"/>
+        <Button x:Name="Init" Content="初始化" HorizontalAlignment="Left" Margin="440,148,0,0" VerticalAlignment="Top" Width="96" Height="38" RenderTransformOrigin="0.512,2.093" Click="Init_Click"/>
+        <Label Content="web" HorizontalAlignment="Left" Margin="162,37,0,0" VerticalAlignment="Top" Width="76"/>
+        <Label Content="service " HorizontalAlignment="Left" Margin="440,108,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

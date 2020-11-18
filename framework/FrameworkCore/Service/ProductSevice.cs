@@ -24,7 +24,8 @@ namespace FrameworkCore.Service
 
         private static IIncludableQueryable<Product, MyDataType> GetAllProduct()
         {
-            return DbServiceProvider.ModelDbContext.Products
+            using var modelDbContext = DbServiceProvider.ModelDbContext;
+            return modelDbContext.Products
                 .Include(p => p.ProductBrands).ThenInclude(d => d.MyDataType)
                 .Include(p => p.ProductNameplates).ThenInclude(d => d.MyDataType)
                 .Include(p => p.ProductProperties).ThenInclude(d => d.MyDataType)
@@ -43,7 +44,7 @@ namespace FrameworkCore.Service
                 await RedisService.AddProductAsync(product);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -62,8 +63,8 @@ namespace FrameworkCore.Service
         public async static Task<int> DeleteProductAsync(Guid productId)
         {
             using var modelDbContext = DbServiceProvider.ModelDbContext;
-            var product = modelDbContext.Products.FindAsync(productId);
-            modelDbContext.Products.Remove(product.Result);
+            var product = await modelDbContext.Products.FindAsync(productId);
+            modelDbContext.Products.Remove(product);
             return await modelDbContext.SaveChangesAsync();
         }
     }

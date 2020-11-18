@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FrameworkCore.Database;
-using FrameworkCore.Metadata.Database;
-using FrameworkCore.Metadata.DataTypes;
+﻿using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.DeviceDefine;
-using FrameworkCore.Metadata.ProductDefine;
 using FrameworkCore.Service;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,9 +40,7 @@ namespace AppService.Controllers
         [HttpGet("GetTemplate/{productId}")]
         public async Task<Device> GetTemplateAsync(string productId)
         {
-            Product product = await ProductSevice.GetProductAsync(Guid.Parse(productId));
-
-            return DeviceService.CreateDeviceTemplateFromProduct(product);
+            return await DeviceService.GetDeviceTemplate(productId);
         }
 
         // POST api/<DeviceController>

@@ -18,9 +18,11 @@ using System.Threading.Tasks;
 namespace FrameworkCore.Redis
 {
     public delegate void OnReceivedRedisCommand(RedisCommand command);
+    public delegate Task OnReceivedRedisCommandAsync(RedisCommand command);
 
     public static class RedisService
     {
+        public const string CommonApplicateServer = "42144c28-8537-45b6-9796-b313d08f0ad8";
         private static readonly ConnectionMultiplexer _redis;
         private static readonly int _product = 0;
         private static readonly int _device = 1;
@@ -32,7 +34,7 @@ namespace FrameworkCore.Redis
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                    .Build();
-            string redisConnectString = configuration["redis:connectString"];
+            string redisConnectString = configuration.GetConnectionString("Redis");
 
             _redis = ConnectionMultiplexer.Connect(redisConnectString);
         }
@@ -60,7 +62,7 @@ namespace FrameworkCore.Redis
 
                 return true;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -85,24 +87,32 @@ namespace FrameworkCore.Redis
                 new RedisValue(JsonConvert.SerializeObject(command)));
         }
 
-        public static async Task GatewayServerSubscribeCommandAsync(Guid gatewayID, OnReceivedRedisCommand action)
+        public static async Task GatewayServerSubscribeCommandAsync(string gatewayId, OnReceivedRedisCommandAsync action)
         {
             await _redis.GetSubscriber().SubscribeAsync(
-                new RedisChannel(gatewayID.ToString(), RedisChannel.PatternMode.Auto),
-                new Action<RedisChannel, RedisValue>((c, v) => { ProcessCommand(v, action); }));
+                new RedisChannel(gatewayId, RedisChannel.PatternMode.Auto),
+                new Action<RedisChannel, RedisValue>(async (c, v) =>
+                {
+                    RedisCommand command = JsonConvert.DeserializeObject<RedisCommand>(v.ToString());
+                    await action(command);
+                }));
         }
 
         public static async Task ApplicateServerSubscribeCommandAsync(Guid applicateServerID, OnReceivedRedisCommand action)
         {
             await _redis.GetSubscriber().SubscribeAsync(
                 new RedisChannel(applicateServerID.ToString(), RedisChannel.PatternMode.Auto),
-                new Action<RedisChannel, RedisValue>((c, v) => { ProcessCommand(v, action); }));
+                new Action<RedisChannel, RedisValue>((c, v) =>
+                {
+                    RedisCommand command = JsonConvert.DeserializeObject<RedisCommand>(v.ToString());
+                    action(command);
+                }));
         }
 
-        public static async Task UnsubscribeAsync(Guid channel)
+        public static async Task UnsubscribeAsync(string channel)
         {
             await _redis.GetSubscriber().UnsubscribeAsync(
-                new RedisChannel(channel.ToString(),
+                new RedisChannel(channel,
                 RedisChannel.PatternMode.Auto));
         }
 
@@ -111,11 +121,6 @@ namespace FrameworkCore.Redis
             await _redis.GetSubscriber().UnsubscribeAllAsync();
         }
 
-        private static void ProcessCommand(RedisValue v, OnReceivedRedisCommand action)
-        {
-            RedisCommand command = JsonConvert.DeserializeObject<RedisCommand>(v.ToString());
-            action(command);
-        }
         #endregion 发布订阅退订
 
         #region 数据操作
@@ -124,6 +129,14 @@ namespace FrameworkCore.Redis
             await _redis.GetDatabase(_product).StringSetAsync(
                 new RedisKey(product.ProductId.ToString()),
                 new RedisValue(JsonConvert.SerializeObject(product)));
+        }
+
+        public static async Task AddDeviceAsync(IEnumerable<Device> devices)
+        {
+            foreach (var device in devices)
+            {
+                await AddDeviceAsync(device);
+            }
         }
 
         public static async Task AddDeviceAsync(Device device)
@@ -148,10 +161,26 @@ namespace FrameworkCore.Redis
             }
         }
 
-        public static async Task<string> GetGatewayIdAsync(string deviceId)
+        public static async Task<string[]> GetPropertiesAsync(string deviceId, string[] properties)
         {
-            return await _redis.GetDatabase(_device).HashGetAsync(deviceId, "GatewayId");
+            List<RedisValue> redisValues = new List<RedisValue>();
+            foreach (var item in properties)
+            {
+                redisValues.Add(new RedisValue(item));
+            }
+            var ret = await _redis.GetDatabase(_device).HashGetAsync(deviceId, redisValues.ToArray());
+            var response = new List<string>();
+            foreach (var item in ret)
+            {
+                response.Add(item.ToString());
+            }
+            return response.ToArray();
         }
+
+        //public static async Task<string> GetGatewayIdAsync(string deviceId)
+        //{
+        //    return await _redis.GetDatabase(_device).HashGetAsync(deviceId, "GatewayId");
+        //}
 
         public static async Task GatewayOnOffLineAsync(string gatewayId, bool isOnline)
         {

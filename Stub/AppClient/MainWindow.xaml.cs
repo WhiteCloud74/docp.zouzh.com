@@ -2,11 +2,15 @@
 using FrameworkCore.Metadata.DataTypes;
 using FrameworkCore.Metadata.DeviceDefine;
 using FrameworkCore.Metadata.ProductDefine;
+using FrameworkCore.Redis;
+using FrameworkCore.Service;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using usr_ammeter;
 
 namespace AppClient
 {
@@ -23,8 +27,11 @@ namespace AppClient
 
         private void InitDatabase_Click(object sender, RoutedEventArgs e)
         {
+            InitDatabase.IsEnabled = false;
+
             string ret = HttpHelper.HttpClienPut($"{_url}Database/InitDatabase", "");
             MessageBox.Show(ret, "初始化数据库");
+            InitDatabase.IsEnabled = true;
         }
 
         private void AddProduct_Click(object sender, RoutedEventArgs e)
@@ -32,10 +39,10 @@ namespace AppClient
             try
             {
                 string usrGateway = JsonConvert.SerializeObject(TestStub.CreateGatewayProduct());
-                var response1 = HttpHelper.HttpClientPost($"{_url}Product/AddOne", usrGateway);
+                string response1 = Task.Run(async () => { return await HttpHelper.HttpClientPostAsync($"{_url}Product/AddOne", usrGateway); }).Result;
 
                 string smartLamp = JsonConvert.SerializeObject(TestStub.CreateSmartLampProduct());
-                var response2 = HttpHelper.HttpClientPost($"{_url}Product/AddOne", smartLamp);
+                string response2 = Task.Run(async () => { return await HttpHelper.HttpClientPostAsync($"{_url}Product/AddOne", smartLamp); }).Result;
 
                 MessageBox.Show($"添加网关产品：{response1}{Environment.NewLine}添加智能台灯产品：{response2}", "添加产品");
             }
@@ -65,7 +72,7 @@ namespace AppClient
                 usrDevice.IsIndependentOnline = true;
                 usrDevice.IsOnLine = true;
                 usrDevice.MacAddress = "CED400010000";
-                var response1 = HttpHelper.HttpClientPost($"{_url}Device/AddOne", JsonConvert.SerializeObject(usrDevice));
+                var response1 = Task.Run(async () => { return await HttpHelper.HttpClientPostAsync($"{_url}Device/AddOne", JsonConvert.SerializeObject(usrDevice)); }).Result;
 
 
                 var smartLampProduct = products.Where(p => !p.IsGateway).ToList()[0];
@@ -85,7 +92,7 @@ namespace AppClient
                 device.DeviceProperties[1].DataValue = "8";
                 device.DeviceProperties[2].DataValue = "6";
                 device.DeviceProperties[3].DataValue = "开";
-                var response2 = HttpHelper.HttpClientPost($"{_url}Device/AddOne", JsonConvert.SerializeObject(device));
+                var response2 = Task.Run(async () => { return await HttpHelper.HttpClientPostAsync($"{_url}Device/AddOne", JsonConvert.SerializeObject(device)); }).Result;
 
                 MessageBox.Show($"添加网关设备：{response1}{Environment.NewLine}添加智能台灯设备：{response2}", "添加产品");
             }
@@ -112,6 +119,55 @@ namespace AppClient
 
             var ret = HttpHelper.HttpClientPostAsync($"{_url}Operate/GetProperties", JsonConvert.SerializeObject(parameters)).Result;
             MessageBox.Show(ret, "GetProperties");
+        }
+
+        private void CreateDevice_Click(object sender, RoutedEventArgs e)
+        {
+            CreateDevice.IsEnabled = false;
+
+            Task.Run(async () =>
+            {
+                Random random = new Random();
+                var gateways = await UsrHelper.CreateUsrDevice(40);
+                foreach (var gateway in gateways)
+                {
+                    await UsrHelper.CreateAmmeter(gateway.DeviceId, gateway.MacAddress, random.Next(5, 8));
+                }
+            }).Wait();
+
+            MessageBox.Show($"OK", "创建产品");
+            CreateDevice.IsEnabled = true;
+        }
+
+        private void CreateProduct_Click(object sender, RoutedEventArgs e)
+        {
+            CreateProduct.IsEnabled = false;
+
+
+            bool ret = true;
+            Task.Run(async () =>
+            {
+                var product = UsrHelper.CreateGatewayProduct();
+                ret &= await ProductSevice.AddProductAsync(product);
+
+                var ammeter = UsrHelper.CreateAmmeterProduct();
+                ret &= await ProductSevice.AddProductAsync(ammeter);
+            }).Wait();
+
+            MessageBox.Show($"{ret}", "创建产品");
+
+            CreateProduct.IsEnabled = true;
+        }
+
+        private void Init_Click(object sender, RoutedEventArgs e)
+        {
+            Init.IsEnabled = false;
+
+            var ret = DatabaseService.InitDatabase();
+            ret &= Task.Run(async () => { return await RedisService.InitDataAsync(); }).Result;
+
+            MessageBox.Show($"{ret}", "初始化");
+            Init.IsEnabled = true;
         }
     }
 }

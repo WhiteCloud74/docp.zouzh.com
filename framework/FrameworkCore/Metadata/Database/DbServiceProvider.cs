@@ -1,17 +1,14 @@
-﻿using FrameworkCore.Database;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace FrameworkCore.Metadata.Database
 {
-    public class DbServiceProvider
+    internal static class DbServiceProvider
     {
-        public static ModelDbContext ModelDbContext { get { return Provider.GetRequiredService<ModelDbContext>(); } }
+        internal static ModelDbContext GetModelDbContext() { return new ModelDbContext(); }
+        internal static ModelDbContext ModelDbContext { get { return Provider.GetService<ModelDbContext>(); } }
 
         static readonly ServiceProvider Provider;
         static readonly IServiceCollection container;
@@ -24,12 +21,12 @@ namespace FrameworkCore.Metadata.Database
                 .Build();
             container.AddDbContextPool<ModelDbContext>(
                 options => options.UseMySql(configuration.GetConnectionString("Mysql")), poolSize: 64);
-            container.AddDbContextPool<ModelDbContext>(
-                options => options.UseInMemoryDatabase("Product"));
+            //container.AddDbContextPool<ModelDbContext>(
+            //    options => options.UseInMemoryDatabase("Product"));
             Provider = container.BuildServiceProvider();
         }
 
-        public static bool Initialize()
+        internal static bool Initialize()
         {
             using var modelDbContext = DbServiceProvider.ModelDbContext;
             bool s = modelDbContext.Database.EnsureDeleted();

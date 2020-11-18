@@ -14,117 +14,6 @@ namespace FrameworkCore.Instrument
 {
     public static class HttpHelper
     {
-        #region HttpWebRequest
-        //POST方法
-        public static string HttpWebRequestPost(string Url, string postDataStr)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            Encoding encoding = Encoding.UTF8;
-            byte[] postData = encoding.GetBytes(postDataStr);
-            request.ContentLength = postData.Length;
-            Stream myRequestStream = request.GetRequestStream();
-            myRequestStream.Write(postData, 0, postData.Length);
-            myRequestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream myResponseStream = response.GetResponseStream();
-            StreamReader myStreamReader = new StreamReader(myResponseStream, encoding);
-            string retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            myResponseStream.Close();
-
-            return retString;
-        }
-
-        //GET方法
-        public static string HttpWebRequestGet(string Url, string postDataStr)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url + (postDataStr == "" ? "" : "?") + postDataStr);
-            request.Method = "GET";
-            request.ContentType = "text/html;charset=UTF-8";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream myResponseStream = response.GetResponseStream();
-            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
-            string retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            myResponseStream.Close();
-            return retString;
-        }
-        #endregion HttpWebRequest
-
-        #region WebClient
-        public static string WebClientDownloadString(string url)
-        {
-            WebClient wc = new WebClient
-            {
-                //wc.BaseAddress = url;   //设置根目录
-                Encoding = Encoding.UTF8    //设置按照何种编码访问，如果不加此行，获取到的字符串中文将是乱码
-            };
-            string str = wc.DownloadString(url);
-            return str;
-        }
-        public static string WebClientDownloadStreamString(string url)
-        {
-            WebClient wc = new WebClient();
-            wc.Headers.Add("User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
-            Stream objStream = wc.OpenRead(url);
-            StreamReader _read = new StreamReader(objStream, Encoding.UTF8);    //新建一个读取流，用指定的编码读取，此处是utf-8
-            string str = _read.ReadToEnd();
-            objStream.Close();
-            _read.Close();
-            return str;
-        }
-
-        public static void WebClientDownloadFile(string url, string filename)
-        {
-            WebClient wc = new WebClient();
-            wc.DownloadFile(url, filename);     //下载文件
-        }
-
-        public static void WebClientDownloadData(string url, string filename)
-        {
-            WebClient wc = new WebClient();
-            byte[] bytes = wc.DownloadData(url);   //下载到字节数组
-            FileStream fs = new FileStream(filename, FileMode.Create);
-            fs.Write(bytes, 0, bytes.Length);
-            fs.Flush();
-            fs.Close();
-        }
-
-        public static void WebClientDownloadFileAsync(string url, string filename)
-        {
-            WebClient wc = new WebClient();
-            wc.DownloadFileCompleted += WebClientDownCompletedEventHandler;
-            wc.DownloadFileAsync(new Uri(url), filename);
-            Console.WriteLine("下载中。。。");
-        }
-        private static void WebClientDownCompletedEventHandler(object sender, AsyncCompletedEventArgs e)
-        {
-            Console.WriteLine(sender.ToString());   //触发事件的对象
-            Console.WriteLine(e.UserState);
-            Console.WriteLine(e.Cancelled);
-            Console.WriteLine("异步下载完成！");
-        }
-
-        public static void WebClientDownloadFileAsync2(string url, string filename)
-        {
-            WebClient wc = new WebClient();
-            wc.DownloadFileCompleted += (sender, e) =>
-            {
-                Console.WriteLine("下载完成!");
-                Console.WriteLine(sender.ToString());
-                Console.WriteLine(e.UserState);
-                Console.WriteLine(e.Cancelled);
-            };
-            wc.DownloadFileAsync(new Uri(url), filename);
-            Console.WriteLine("下载中。。。");
-        }
-        #endregion WebClient
-
-        #region HttpClient
-
         private static readonly HttpClient client;
         static HttpHelper()
         {
@@ -146,29 +35,6 @@ namespace FrameworkCore.Instrument
                 HttpResponseMessage res = await client.PostAsync(url, content);
 
                 return res.StatusCode == HttpStatusCode.OK ? await res.Content.ReadAsStringAsync() : null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static string HttpClientPost(string url, List<KeyValuePair<string, string>> paramArray)
-        {
-            return HttpClientPost(url, BuildParam(paramArray));
-        }
-
-        public static string HttpClientPost(string url, string postData)
-        {
-            try
-            {
-                HttpContent content = new StringContent(postData);
-
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                HttpResponseMessage res = client.PostAsync(url, content).Result;
-
-                return res.StatusCode == HttpStatusCode.OK ? res.Content.ReadAsStringAsync().Result : null;
             }
             catch (Exception)
             {
@@ -222,7 +88,7 @@ namespace FrameworkCore.Instrument
 
                 return res.StatusCode == HttpStatusCode.OK ? res.Content.ReadAsStringAsync().Result : null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -331,7 +197,5 @@ namespace FrameworkCore.Instrument
             }
             return result;
         }
-        #endregion HttpClient
-
     }
 }

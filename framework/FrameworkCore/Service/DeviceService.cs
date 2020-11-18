@@ -5,13 +5,25 @@ using FrameworkCore.Redis;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FrameworkCore.Service
 {
     public class DeviceService
     {
-        public async static Task<Device> GetDeviceAsync(Guid deviceId)
+        public static async Task<IEnumerable<Device>> SearchAsync(Expression<Func<Device, bool>> expression)
+        {
+            using var modelDbContext = DbServiceProvider.ModelDbContext;
+            return await modelDbContext.Devices
+                .Where(expression)
+                .Include(d => d.DeviceNameplates)
+                .Include(d => d.DeviceProperties)
+                .ToListAsync();
+        }
+
+        public static async Task<Device> GetDeviceAsync(Guid deviceId)
         {
             using var modelDbContext = DbServiceProvider.ModelDbContext;
             return await modelDbContext.Devices
@@ -27,6 +39,23 @@ namespace FrameworkCore.Service
                 .Include(d => d.DeviceNameplates)
                 .Include(d => d.DeviceProperties)
                 .ToListAsync();
+        }
+
+        public static async Task<bool> AddDeviceAsync(IEnumerable<Device> devices)
+        {
+            try
+            {
+                using var modelDbContext = DbServiceProvider.ModelDbContext;
+                modelDbContext.AddRange(devices);
+                await modelDbContext.SaveChangesAsync();
+                await RedisService.AddDeviceAsync(devices);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         public static async Task<bool> AddDeviceAsync(Device device)
@@ -62,8 +91,10 @@ namespace FrameworkCore.Service
             return await modelDbContext.SaveChangesAsync() == 1;
         }
 
-        public static Device CreateDeviceTemplateFromProduct(Product product)
+        public static async Task<Device> GetDeviceTemplate(string productId)
         {
+            Product product = await ProductSevice.GetProductAsync(Guid.Parse(productId));
+
             Device device = new Device()
             {
                 DeviceId = Guid.NewGuid(),

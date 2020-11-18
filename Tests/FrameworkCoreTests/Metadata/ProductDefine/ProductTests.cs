@@ -24,7 +24,7 @@ namespace FrameworkCore.Metadata.ProductDefine.Tests
         {
             try
             {
-                DbServiceProvider.Initialize();
+                DatabaseService.InitDatabase();
             }
             catch (Exception)
             {
